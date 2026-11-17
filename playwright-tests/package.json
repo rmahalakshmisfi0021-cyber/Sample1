@@ -7,7 +7,8 @@
   "scripts": {
     "test": "playwright test",
     "test:headed": "playwright test --headed",
-    "report": "node scripts/build-report.mjs"
+    "report": "node scripts/build-report.mjs",
+    "test:report": "node --test scripts/build-report.test.mjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.56.0"

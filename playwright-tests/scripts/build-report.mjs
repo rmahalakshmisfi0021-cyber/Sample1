@@ -1,6 +1,9 @@
-import { readFileSync, writeFileSync, readdirSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync, readdirSync } from 'node:fs';
 
-const data = JSON.parse(readFileSync('reports/results.json', 'utf8'));
+const resultsPath = 'reports/results.json';
+const data = existsSync(resultsPath)
+  ? JSON.parse(readFileSync(resultsPath, 'utf8'))
+  : { stats: { duration: 0, startTime: Date.now() }, suites: [] };
 
 const rows = [];
 (function walk(suite, file) {
@@ -31,7 +34,9 @@ const failed = total - passed;
 const secs = (data.stats?.duration ?? 0) / 1000;
 const rate = total ? ((passed / total) * 100).toFixed(1) : '0';
 const date = new Date(data.stats?.startTime ?? Date.now()).toLocaleString();
-const shots = readdirSync('reports/screenshots').filter((f) => f.endsWith('.png')).sort();
+const shots = existsSync('reports/screenshots')
+  ? readdirSync('reports/screenshots').filter((f) => f.endsWith('.png')).sort()
+  : [];
 const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
 const verdict = failed === 0 ? 'PASS' : 'FAIL';
 
