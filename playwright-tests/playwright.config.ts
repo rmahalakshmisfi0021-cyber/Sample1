@@ -1,7 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 
 const APP_URL = process.env.APP_URL ?? 'http://localhost:5173';
-const APP_DIR = '../Task-Manager-for-tasks';
+const APP_DIR = '..';
 
 export default defineConfig({
   testDir: './tests',
