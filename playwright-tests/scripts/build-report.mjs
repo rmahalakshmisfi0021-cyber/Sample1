@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync, readdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, readdirSync, existsSync } from 'node:fs';
 
 const data = JSON.parse(readFileSync('reports/results.json', 'utf8'));
 
@@ -31,7 +31,10 @@ const failed = total - passed;
 const secs = (data.stats?.duration ?? 0) / 1000;
 const rate = total ? ((passed / total) * 100).toFixed(1) : '0';
 const date = new Date(data.stats?.startTime ?? Date.now()).toLocaleString();
-const shots = readdirSync('reports/screenshots').filter((f) => f.endsWith('.png')).sort();
+const screenshotsDir = 'reports/screenshots';
+const shots = existsSync(screenshotsDir)
+  ? readdirSync(screenshotsDir).filter((f) => f.endsWith('.png')).sort()
+  : [];
 const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
 const verdict = failed === 0 ? 'PASS' : 'FAIL';
 
@@ -57,7 +60,7 @@ ${failed ? rows.filter((r) => !r.ok).map((r) => `- **${r.title}**: ${r.error}`).
 
 ## Screenshots
 
-${shots.map((s) => `### ${s.replace('.png', '')}\n\n![${s}](screenshots/${s})`).join('\n\n')}
+${shots.length ? shots.map((s) => `### ${s.replace('.png', '')}\n\n![${s}](screenshots/${s})`).join('\n\n') : 'None.'}
 `;
 writeFileSync('reports/TEST-REPORT.md', md);
 
@@ -86,7 +89,7 @@ figcaption{font-size:13px;color:#555;margin-top:6px}
 <h2>Results by suite</h2>
 ${[...groups].map(([file, rs]) => `<h3>${esc(file)}</h3><table><tr><th>Test</th><th>Result</th><th>Time</th></tr>${rs.map((r) => `<tr><td>${esc(r.title)}</td><td class="${r.ok ? 'pass' : 'fail'}">${r.ok ? 'PASS' : 'FAIL'}</td><td>${(r.ms / 1000).toFixed(1)}s</td></tr>`).join('')}</table>`).join('')}
 <h2>Screenshots</h2>
-<div class="shots">${shots.map((s) => `<figure><a href="screenshots/${s}"><img src="screenshots/${s}" alt="${s}" loading="lazy"></a><figcaption>${s}</figcaption></figure>`).join('')}</div>
+${shots.length ? `<div class="shots">${shots.map((s) => `<figure><a href="screenshots/${s}"><img src="screenshots/${s}" alt="${s}" loading="lazy"></a><figcaption>${s}</figcaption></figure>`).join('')}</div>` : '<p>None.</p>'}
 </main></body></html>`;
 writeFileSync('reports/TEST-REPORT.html', html);
 
