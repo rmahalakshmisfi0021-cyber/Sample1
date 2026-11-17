@@ -7,6 +7,7 @@
   "scripts": {
     "test": "playwright test",
     "test:headed": "playwright test --headed",
+    "test:config": "playwright test -c playwright.config.unit.ts tests/00-config.spec.ts",
     "report": "node scripts/build-report.mjs"
   },
   "devDependencies": {

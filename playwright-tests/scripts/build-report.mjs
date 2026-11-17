@@ -45,7 +45,7 @@ const md = `# TaskFlow Task Manager — Test Report
 | Tests | ${total} total, ${passed} passed, ${failed} failed |
 | Pass rate | ${rate}% |
 | Duration | ${secs.toFixed(1)}s |
-| App under test | \`Task-Manager-for-tasks\` at http://localhost:5173 |
+| App under test | repository root app at http://localhost:5173 |
 
 ## Results by suite
 
